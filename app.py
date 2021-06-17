@@ -1,6 +1,5 @@
 import sys
 import camelot
-from tqdm import tqdm
 
 import re
 
@@ -21,17 +20,16 @@ class Parser:
         print("Parsing started...")
         for rows in tables:
             for ids in rows.df.loc[1:, 3]:
-                s = ""
-                digits = re.findall(r'\d', ids)
-                ids_arr.append(s.join(digits))
-
-        for i, id_ in enumerate(ids_arr):    
-            if ("cid" or "[" or "]" or ")" or ")") in s.join(id_.split()):
-                print("Can't define the font")
-                self.ocr_for_id()
-                break
+                s = ""   
+                if ("cid" or "[" or "]" or ")" or ")") in s.join(ids.split()):
+                    print("Can't define the font")
+                    ids_arr = self.ocr_for_id()
+                    break
+                else:
+                    digits = re.findall(r'\d', ids)
+                    ids_arr.append(s.join(digits))
         
-        
+        print("End!")
         self.arr_to_txt(ids_arr)
 
         # except:
@@ -51,14 +49,12 @@ class Parser:
             bounds = reader.readtext(np.array(images[i]), detail=0)
             txt = str(bounds)
             ids = re.findall(r'(\d{5}\ \d{4}|\d{3}\ \d{3}\ \d{3})', txt)
-            
             for id_ in ids:
                 digit = re.findall(r'\d+', id_)
                 s = ""
                 ids_arr.append(s.join(digit))
 
-
-        self.arr_to_txt(ids_arr)
+        return ids_arr
 
 
 
