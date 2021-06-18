@@ -9,8 +9,9 @@ from pdf2image import convert_from_path
 import easyocr
 
 class Parser:
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, to_url: str) -> None:
         self.url = url
+        self.destination = to_url
     
     def get_kaspi_id(self):
         # try:
@@ -30,13 +31,13 @@ class Parser:
                     ids_arr.append(s.join(digits))
         
         print("End!")
-        self.arr_to_txt(ids_arr)
+        self.arr_to_txt(ids_arr, self.destination)
 
         # except:
         #     print("file not found")
 
-    def arr_to_txt(self, source):
-        with open('result.txt', 'w') as f:
+    def arr_to_txt(self, source, destination):
+        with open(destination, 'w') as f:
             for item in source:
                 f.write("%s\n" % item)
 
@@ -60,7 +61,8 @@ class Parser:
 
 
 if __name__ == '__main__':
-    url = str(sys.argv[1:][0])
-    parse = Parser(url)
+    url = str(sys.argv[1])
+    to_url = str(sys.argv[2])
+    parse = Parser(url, to_url)
     parse.get_kaspi_id()
     
